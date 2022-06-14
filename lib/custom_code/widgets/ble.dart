@@ -26,29 +26,65 @@ class Ble extends StatefulWidget {
   _BleState createState() => _BleState();
 }
 
+
 class _BleState extends State<Ble> {
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+  String test = "A ";
+
+  // Start scanning
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // Start scanning
+    flutterBlue.startScan(timeout: Duration(seconds: 10));
+    // Start scanning
+
+// Listen to scan results
+    var subscription = flutterBlue.scanResults.listen((results) {
+      print("listning");
+      print(results.length);
+      // do something with scan results
+      for (ScanResult r in results) {
+        // FFAppState().counter=FFAppState().counter+1;
+        // FFAppState().devicelist.add(r.device.name)
+        r.device.connect();
+;        print('${r.device.state}');
+;        print('${r.device.name}');
+;        print('${r.device.toString()}');
+      }
+    });
+    // if (FFAppState().startscan) {
+    //   test = test + " 1 ";S
+    //   flutterBlue.startScan(timeout: Duration(seconds: 10));
+    //   test = test + " 2 ";
+    //   // Listen to scan results
+    //   var subscription = flutterBlue.scanResults.listen((results) {
+    //     // do something with scan results
+    //     print("listning");
+    //     test = test + " 3 ";
+    //     for (ScanResult r in results) {
+    //       test = test + " 4 ";
+    //       FFAppState().devicelist.insert(0, "pat");
+    //       FFAppState().devicelist.insert(0, r.device.name);
+    //       //print('${r.device.name} found! rssi: ${r.rssi}');
+    //     }
+    //   });
+    //   test = test + " 5 ";
+    // }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    // Stop scanning
+    flutterBlue.stopScan();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
-    String test = "A ";
-    // Start scanning
-    if (FFAppState().startscan) {
-      test = test + " 1 ";
-      flutterBlue.startScan(timeout: Duration(seconds: 10));
-      test = test + " 2 ";
-      // Listen to scan results
-      var subscription = flutterBlue.scanResults.listen((results) {
-        // do something with scan results
-        test = test + " 3 ";
-        for (ScanResult r in results) {
-          test = test + " 4 ";
-          FFAppState().devicelist.insert(0, "pat");
-          FFAppState().devicelist.insert(0, r.device.name);
-          //print('${r.device.name} found! rssi: ${r.rssi}');
-        }
-      });
-      test = test + " 5 ";
-    }
-    ;
+
+
 
     return Text(
       "Counter: " +
