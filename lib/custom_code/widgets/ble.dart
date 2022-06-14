@@ -31,6 +31,7 @@ class _BleState extends State<Ble> {
   FlutterBlue flutterBlue = FlutterBlue.instance;
   String test = "A ";
 
+  List<String> devicesName=[];
   // Start scanning
   @override
   void initState() {
@@ -46,13 +47,17 @@ class _BleState extends State<Ble> {
       print(results.length);
       // do something with scan results
       for (ScanResult r in results) {
-        // FFAppState().counter=FFAppState().counter+1;
-        // FFAppState().devicelist.add(r.device.name)
-        r.device.connect();
-;        print('${r.device.state}');
-;        print('${r.device.name}');
-;        print('${r.device.toString()}');
+        devicesName.add(r.device.id.toString());
+        //FFAppState().counter=FFAppState().counter+1;
+        FFAppState().devicelist.add(r.device.name);
+
+        print('${r.device.state}');
+        print('${r.device.name}');
+        print('${r.device.toString()}');
       }
+      setState(() {
+
+      });
     });
     // if (FFAppState().startscan) {
     //   test = test + " 1 ";S
@@ -84,6 +89,7 @@ class _BleState extends State<Ble> {
   @override
   Widget build(BuildContext context) {
 
+    return Text(devicesName?.first??"N/A");
 
 
     return Text(
