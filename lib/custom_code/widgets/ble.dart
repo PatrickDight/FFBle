@@ -34,6 +34,7 @@ class _BleState extends State<Ble> {
   final String title="";
   final FlutterBlue flutterBlue = FlutterBlue.instance;
   final List<BluetoothDevice> devicesList =[];
+  final List<BluetoothDevice> connectedDevicesList =[];
   final Map<Guid, List<int>> readValues =  Map<Guid, List<int>>();
   final _writeController = TextEditingController();
   BluetoothDevice _connectedDevice;
@@ -43,6 +44,12 @@ class _BleState extends State<Ble> {
     if (!devicesList.contains(device)) {
       setState(() {
         devicesList.add(device);
+      });
+    }
+  }  _addConnectedDeviceToList(final BluetoothDevice device) {
+    if (!connectedDevicesList.contains(device)) {
+      setState(() {
+        connectedDevicesList.add(device);
       });
     }
   }
@@ -79,17 +86,18 @@ class _BleState extends State<Ble> {
   @override
   void initState() {
     super.initState();
+
    flutterBlue.connectedDevices
         .asStream()
         .listen((List<BluetoothDevice> devices) {
       for (BluetoothDevice device in devices) {
-        print("DeviceFound");
-        _addDeviceTolist(device);
+        print("Connected DeviceFound");
+        _addConnectedDeviceToList(device);
       }
     });
     flutterBlue.scanResults.listen((List<ScanResult> results) {
       for (ScanResult result in results) {
-        print("DeviceFound");
+        print("Result DeviceFound");
 
         _addDeviceTolist(result.device);
       }
@@ -102,7 +110,9 @@ class _BleState extends State<Ble> {
 
     return Scaffold(
    //   backgroundColor: Colors.white,
-      body: devicesList.isEmpty?Text("Scanning",style: TextStyle(color: Colors.white)):_buildListViewOfDevices(),
+      body: devicesList.isEmpty?Text("Scanning",style: TextStyle(color: Colors.white)):
+      _buildView(),
+      //_buildListViewOfDevices(),
     );
     // return Container(
     //   width: MediaQuery.of(context).size.width,
@@ -160,17 +170,20 @@ class _BleState extends State<Ble> {
               FlatButton(
                 color: Colors.blue,
                 child: Text(
-                  'Connect',
+                 _connectedDevice?.id==device.id?"Connected":'Connect',
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () async {
 
+
                   flutterBlue.stopScan();
                   try {
-                    await device.connect(timeout: Duration(seconds: 20),);
-                    flutterBlue.startScan();
+
+                    await device.connect();
+
+                   // flutterBlue.startScan();
                   } catch (e) {
-                    flutterBlue.startScan();
+                   // flutterBlue.startScan();
 
                     print("Connect Exception");
 
@@ -185,6 +198,7 @@ class _BleState extends State<Ble> {
                     _services = await device.discoverServices();
                   }
                   setState(() {
+                    print("Connected Successfully");
                     _connectedDevice = device;
                   });
                 },
