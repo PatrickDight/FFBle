@@ -1,12 +1,6 @@
 // Automatic FlutterFlow imports
 import 'dart:convert';
 
-import '../../flutter_flow/flutter_flow_theme.dart';
-import '../../flutter_flow/flutter_flow_util.dart';
-import '../../flutter_flow/flutter_flow_widgets.dart';
-import 'index.dart'; // Imports other custom widgets
-import '../actions/index.dart'; // Imports custom actions
-import '../../flutter_flow/custom_functions.dart'; // Imports custom functions
 import 'package:flutter/material.dart';
 // Begin custom widget code
 import 'package:flutter_blue/flutter_blue.dart';
@@ -111,8 +105,8 @@ class _BleState extends State<Ble> {
     return Scaffold(
    //   backgroundColor: Colors.white,
       body: devicesList.isEmpty?Text("Scanning",style: TextStyle(color: Colors.white)):
-      _buildView(),
-      //_buildListViewOfDevices(),
+      //_buildView(),
+      _buildListViewOfDevices(),
     );
     // return Container(
     //   width: MediaQuery.of(context).size.width,
