@@ -30,7 +30,6 @@ dependencies:
   flutter_blue: ^0.8.0
   flutter_reactive_ble: ^5.0.2
   font_awesome_flutter: 10.1.0
-  geolocator: 8.0.1
   google_fonts: 2.2.0
   intl: 0.17.0
   json_path: 0.3.1
