@@ -75,11 +75,18 @@ class _BleState extends State<Ble> {
 // //     });
 //
 //   }
-
-
   @override
   void initState() {
     super.initState();
+    if(_connectedDevice!=null){
+      _connectedDevice.state.listen((event) {
+
+        setState(() {
+          print("State updated");
+        });
+
+      });
+    }
 
    flutterBlue.connectedDevices
         .asStream()
@@ -105,8 +112,8 @@ class _BleState extends State<Ble> {
     return Scaffold(
    //   backgroundColor: Colors.white,
       body: devicesList.isEmpty?Text("Scanning",style: TextStyle(color: Colors.white)):
-      //_buildView(),
-      _buildListViewOfDevices(),
+      _buildView(),
+      //_buildListViewOfDevices(),
     );
     // return Container(
     //   width: MediaQuery.of(context).size.width,
@@ -204,6 +211,7 @@ class _BleState extends State<Ble> {
     }
 
     return ListView(
+
       padding: const EdgeInsets.all(8),
       children: <Widget>[
         ...containers,
