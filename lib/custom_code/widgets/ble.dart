@@ -1,4 +1,12 @@
 // Automatic FlutterFlow imports
+import '../../flutter_flow/flutter_flow_theme.dart';
+import '../../flutter_flow/flutter_flow_util.dart';
+import 'index.dart'; // Imports other custom widgets
+import '../actions/index.dart'; // Imports custom actions
+import '../../flutter_flow/custom_functions.dart'; // Imports custom functions
+import 'package:flutter/material.dart';
+// Begin custom widget code
+// Automatic FlutterFlow imports
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -23,14 +31,12 @@ class Ble extends StatefulWidget {
   _BleState createState() => _BleState();
 }
 
-
 class _BleState extends State<Ble> {
-
-  final String title="";
+  final String title = "";
   final FlutterBlue flutterBlue = FlutterBlue.instance;
-  final List<BluetoothDevice> devicesList =[];
-  final List<BluetoothDevice> connectedDevicesList =[];
-  final Map<Guid, List<int>> readValues =  Map<Guid, List<int>>();
+  final List<BluetoothDevice> devicesList = [];
+  final List<BluetoothDevice> connectedDevicesList = [];
+  final Map<Guid, List<int>> readValues = Map<Guid, List<int>>();
   final _writeController = TextEditingController();
   BluetoothDevice _connectedDevice;
   List<BluetoothService> _services;
@@ -41,7 +47,9 @@ class _BleState extends State<Ble> {
         devicesList.add(device);
       });
     }
-  }  _addConnectedDeviceToList(final BluetoothDevice device) {
+  }
+
+  _addConnectedDeviceToList(final BluetoothDevice device) {
     if (!connectedDevicesList.contains(device)) {
       setState(() {
         connectedDevicesList.add(device);
@@ -76,18 +84,10 @@ class _BleState extends State<Ble> {
 // //     });
 //
 //   }
+
   @override
   void initState() {
     super.initState();
-    if(_connectedDevice!=null){
-      _connectedDevice.state.listen((event) {
-
-        setState(() {
-          print("State updated");
-        });
-
-      });
-    }
 
     flutterBlue.connectedDevices
         .asStream()
@@ -109,15 +109,49 @@ class _BleState extends State<Ble> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       //   backgroundColor: Colors.white,
-      body: devicesList.isEmpty?Text("Scanning",style: TextStyle(color: Colors.white)):
-      _buildView(),
-      //: _buildListViewOfDevices(),
+      body: devicesList.isEmpty
+          ? Text("Scanning", style: TextStyle(color: Colors.white))
+          : _buildView(),
+      //_buildListViewOfDevices(),
     );
-
+    // return Container(
+    //   width: MediaQuery.of(context).size.width,
+    //   margin: EdgeInsets.only(top: 6),
+    //   child: Column(
+    //     children: [
+    //       Container(
+    //         width: MediaQuery.of(context).size.width,
+    //         child: FFButtonWidget(
+    //
+    //           onPressed: () async {
+    //             setState(() => FFAppState().startscan = true);
+    //             print(FFAppState().startscan);
+    //           },
+    //           text: FFAppState().startscan==true?"Scanning...":'Scan',
+    //           options: FFButtonOptions(
+    //             width: 130,
+    //             height: 40,
+    //             color: FlutterFlowTheme.of(context).primaryColor,
+    //             textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+    //               fontFamily: 'Poppins',
+    //               color: Colors.white,
+    //             ),
+    //             borderSide: BorderSide(
+    //               color: Colors.transparent,
+    //               width: 1,
+    //             ),
+    //             borderRadius: 12,
+    //           ),
+    //         ),
+    //       ),
+    //       devicesName.isNotEmpty?Text(devicesName?.first??"N/A"):Text("No devices found")
+    //     ],
+    //   ),
+    // );
   }
+
   ListView _buildListViewOfDevices() {
     List<Container> containers = [];
     for (BluetoothDevice device in devicesList) {
@@ -129,25 +163,24 @@ class _BleState extends State<Ble> {
               Expanded(
                 child: Column(
                   children: <Widget>[
-                    Text((device.name == ''||device.name==null) ? 'unknown device' : device.name),
+                    Text((device.name == '' || device.name == null)
+                        ? 'unknown device'
+                        : device.name),
                     Text(device.id.toString()),
-                    Text(device.runtimeType .toString()),
-                    Text(device.state.first.hashCode  .toString()),
+                    Text(device.runtimeType.toString()),
+                    Text(device.state.first.hashCode.toString()),
                   ],
                 ),
               ),
               FlatButton(
                 color: Colors.blue,
                 child: Text(
-                  _connectedDevice?.id==device.id?"Connected":'Connect',
+                  _connectedDevice?.id == device.id ? "Connected" : 'Connect',
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () async {
-
-
                   flutterBlue.stopScan();
                   try {
-
                     await device.connect();
 
                     // flutterBlue.startScan();
@@ -158,7 +191,6 @@ class _BleState extends State<Ble> {
 
                     if (e.code != 'already_connected') {
                       throw e;
-
                     }
                   } finally {
                     flutterBlue.startScan();
@@ -179,7 +211,6 @@ class _BleState extends State<Ble> {
     }
 
     return ListView(
-
       padding: const EdgeInsets.all(8),
       children: <Widget>[
         ...containers,
@@ -189,10 +220,9 @@ class _BleState extends State<Ble> {
 
   List<ButtonTheme> _buildReadWriteNotifyButton(
       BluetoothCharacteristic characteristic) {
-    List<ButtonTheme> buttons =[];
+    List<ButtonTheme> buttons = [];
 
     if (characteristic.properties.read) {
-
       buttons.add(
         ButtonTheme(
           minWidth: 10,
@@ -204,13 +234,12 @@ class _BleState extends State<Ble> {
               child: Text('READ', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 var sub = characteristic.value.listen((value) {
-                  readValues[characteristic.uuid] = value;
                   setState(() {
-
+                    readValues[characteristic.uuid] = value;
                   });
                 });
                 await characteristic.read();
-                // sub.cancel();
+                sub.cancel();
               },
             ),
           ),
@@ -296,39 +325,6 @@ class _BleState extends State<Ble> {
       List<Widget> characteristicsWidget = [];
 
       for (BluetoothCharacteristic characteristic in service.characteristics) {
-        if(characteristic.uuid=="e794afa8-2a47-4f3d-82d9-bdad3d2809d3"){
-          // characteristicsWidget.add(
-          //     Align(
-          //       alignment: Alignment.centerLeft,
-          //       child: Column(
-          //         children: <Widget>[
-          //           Row(
-          //             children: <Widget>[
-          //               Text(characteristic.uuid.toString(),
-          //                   style: TextStyle(fontWeight: FontWeight.bold)),
-          //             ],
-          //           ),
-          //           Row(
-          //             children: <Widget>[
-          //               ..._buildReadWriteNotifyButton(characteristic),
-          //             ],
-          //           ),
-          //           Row(
-          //             children: <Widget>[
-          //               Text('Value: ' +
-          //                   readValues[characteristic.uuid].toString()),
-          //             ],
-          //           ),
-          //           Divider(),
-          //         ],
-          //       ),
-          //     ),
-          //   );
-
-          print("Device found");
-        }
-        print("Device found UDID");
-        print( readValues[characteristic.uuid].toString());
         characteristicsWidget.add(
           Align(
             alignment: Alignment.centerLeft,
@@ -347,7 +343,8 @@ class _BleState extends State<Ble> {
                 ),
                 Row(
                   children: <Widget>[
-                    Text('Value: ' + readValues[characteristic.uuid].toString(),maxLines: 3,),
+                    Text(
+                        'Value: ' + readValues[characteristic.uuid].toString()),
                   ],
                 ),
                 Divider(),
@@ -355,8 +352,6 @@ class _BleState extends State<Ble> {
             ),
           ),
         );
-
-
       }
       containers.add(
         Container(
@@ -381,5 +376,4 @@ class _BleState extends State<Ble> {
     }
     return _buildListViewOfDevices();
   }
-
 }

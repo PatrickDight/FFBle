@@ -31,6 +31,10 @@ class FFAppState {
   int counter = 0;
 
   LatLng whereami;
+
+  List<int> PresideStatus = [];
+
+  String presidetostring = '';
 }
 
 LatLng _latLngFromString(String val) {
