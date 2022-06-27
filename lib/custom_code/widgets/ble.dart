@@ -234,8 +234,10 @@ class _BleState extends State<Ble> {
               child: Text('READ', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 var sub = characteristic.value.listen((value) {
+                  FFAppState().presidetostring=value.toString();
+                  readValues[characteristic.uuid] = value;
                   setState(() {
-                    readValues[characteristic.uuid] = value;
+
                   });
                 });
                 await characteristic.read();
