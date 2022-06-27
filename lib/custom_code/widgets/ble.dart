@@ -25,6 +25,7 @@ class Ble extends StatefulWidget {
 
 
 class _BleState extends State<Ble> {
+
   final String title="";
   final FlutterBlue flutterBlue = FlutterBlue.instance;
   final List<BluetoothDevice> devicesList =[];
@@ -88,7 +89,7 @@ class _BleState extends State<Ble> {
       });
     }
 
-   flutterBlue.connectedDevices
+    flutterBlue.connectedDevices
         .asStream()
         .listen((List<BluetoothDevice> devices) {
       for (BluetoothDevice device in devices) {
@@ -103,52 +104,19 @@ class _BleState extends State<Ble> {
         _addDeviceTolist(result.device);
       }
     });
-   flutterBlue.startScan();
+    flutterBlue.startScan();
   }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-   //   backgroundColor: Colors.white,
+      //   backgroundColor: Colors.white,
       body: devicesList.isEmpty?Text("Scanning",style: TextStyle(color: Colors.white)):
       _buildView(),
-      //_buildListViewOfDevices(),
+      //: _buildListViewOfDevices(),
     );
-    // return Container(
-    //   width: MediaQuery.of(context).size.width,
-    //   margin: EdgeInsets.only(top: 6),
-    //   child: Column(
-    //     children: [
-    //       Container(
-    //         width: MediaQuery.of(context).size.width,
-    //         child: FFButtonWidget(
-    //
-    //           onPressed: () async {
-    //             setState(() => FFAppState().startscan = true);
-    //             print(FFAppState().startscan);
-    //           },
-    //           text: FFAppState().startscan==true?"Scanning...":'Scan',
-    //           options: FFButtonOptions(
-    //             width: 130,
-    //             height: 40,
-    //             color: FlutterFlowTheme.of(context).primaryColor,
-    //             textStyle: FlutterFlowTheme.of(context).subtitle2.override(
-    //               fontFamily: 'Poppins',
-    //               color: Colors.white,
-    //             ),
-    //             borderSide: BorderSide(
-    //               color: Colors.transparent,
-    //               width: 1,
-    //             ),
-    //             borderRadius: 12,
-    //           ),
-    //         ),
-    //       ),
-    //       devicesName.isNotEmpty?Text(devicesName?.first??"N/A"):Text("No devices found")
-    //     ],
-    //   ),
-    // );
+
   }
   ListView _buildListViewOfDevices() {
     List<Container> containers = [];
@@ -171,7 +139,7 @@ class _BleState extends State<Ble> {
               FlatButton(
                 color: Colors.blue,
                 child: Text(
-                 _connectedDevice?.id==device.id?"Connected":'Connect',
+                  _connectedDevice?.id==device.id?"Connected":'Connect',
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () async {
@@ -182,9 +150,9 @@ class _BleState extends State<Ble> {
 
                     await device.connect();
 
-                   // flutterBlue.startScan();
+                    // flutterBlue.startScan();
                   } catch (e) {
-                   // flutterBlue.startScan();
+                    // flutterBlue.startScan();
 
                     print("Connect Exception");
 
@@ -224,6 +192,7 @@ class _BleState extends State<Ble> {
     List<ButtonTheme> buttons =[];
 
     if (characteristic.properties.read) {
+
       buttons.add(
         ButtonTheme(
           minWidth: 10,
@@ -235,12 +204,13 @@ class _BleState extends State<Ble> {
               child: Text('READ', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 var sub = characteristic.value.listen((value) {
+                  readValues[characteristic.uuid] = value;
                   setState(() {
-                   readValues[characteristic.uuid] = value;
+
                   });
                 });
                 await characteristic.read();
-                sub.cancel();
+                // sub.cancel();
               },
             ),
           ),
@@ -326,6 +296,39 @@ class _BleState extends State<Ble> {
       List<Widget> characteristicsWidget = [];
 
       for (BluetoothCharacteristic characteristic in service.characteristics) {
+        if(characteristic.uuid=="e794afa8-2a47-4f3d-82d9-bdad3d2809d3"){
+          // characteristicsWidget.add(
+          //     Align(
+          //       alignment: Alignment.centerLeft,
+          //       child: Column(
+          //         children: <Widget>[
+          //           Row(
+          //             children: <Widget>[
+          //               Text(characteristic.uuid.toString(),
+          //                   style: TextStyle(fontWeight: FontWeight.bold)),
+          //             ],
+          //           ),
+          //           Row(
+          //             children: <Widget>[
+          //               ..._buildReadWriteNotifyButton(characteristic),
+          //             ],
+          //           ),
+          //           Row(
+          //             children: <Widget>[
+          //               Text('Value: ' +
+          //                   readValues[characteristic.uuid].toString()),
+          //             ],
+          //           ),
+          //           Divider(),
+          //         ],
+          //       ),
+          //     ),
+          //   );
+
+          print("Device found");
+        }
+        print("Device found UDID");
+        print( readValues[characteristic.uuid].toString());
         characteristicsWidget.add(
           Align(
             alignment: Alignment.centerLeft,
@@ -344,8 +347,7 @@ class _BleState extends State<Ble> {
                 ),
                 Row(
                   children: <Widget>[
-                    Text('Value: ' +
-                        readValues[characteristic.uuid].toString()),
+                    Text('Value: ' + readValues[characteristic.uuid].toString(),maxLines: 3,),
                   ],
                 ),
                 Divider(),
@@ -353,6 +355,8 @@ class _BleState extends State<Ble> {
             ),
           ),
         );
+
+
       }
       containers.add(
         Container(
